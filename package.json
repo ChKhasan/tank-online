@@ -1,0 +1,28 @@
+{
+  "name": "tank-online",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @tank-online/shared && concurrently -k -n SERVER,WEB -c yellow,cyan \"npm run dev -w @tank-online/server\" \"npm run dev -w @tank-online/web\"",
+    "dev:full": "npm run db:up && npm run dev",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "build": "npm run build -w @tank-online/shared && npm run build -w @tank-online/server && npm run build -w @tank-online/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @tank-online/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  }
+}

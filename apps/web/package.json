@@ -1,0 +1,35 @@
+{
+  "name": "@tank-online/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "typecheck": "vue-tsc -b",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@colyseus/sdk": "^0.18.1",
+    "@fontsource/barlow-condensed": "^5.2.7",
+    "@fontsource/bebas-neue": "^5.2.7",
+    "@tank-online/shared": "workspace:*",
+    "@vue/reactivity": "^3.5.43",
+    "@vue/runtime-core": "^3.5.43",
+    "@vue/runtime-dom": "^3.5.43",
+    "csstype": "^3.2.3",
+    "phaser": "^4.2.1",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.0.2",
+    "vite": "^7.1.9",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.1.1"
+  }
+}

@@ -1,0 +1,61 @@
+name: tank-online-docker
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tank_online
+      POSTGRES_USER: tank
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}
+    volumes:
+      - game_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tank -d tank_online"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  server:
+    build:
+      context: .
+      target: server
+    restart: unless-stopped
+    init: true
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 2567
+      DATABASE_URL: postgres://tank:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}@postgres:5432/tank_online
+      REQUIRE_DATABASE: "true"
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.docker}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:8080}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:2567/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  web:
+    build:
+      context: .
+      target: web
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8081}:80"
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/backend/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+
+volumes:
+  game_postgres:

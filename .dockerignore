@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/.vite
+**/*.tsbuildinfo
+**/coverage
+**/test-results
+**/playwright-report
+.git
+.codex
+.agents
+**/.env
+**/.env.*
+**/*.log
